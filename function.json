@@ -1,0 +1,139 @@
+{
+  "type": "scalar.function",
+  "input_schema": {
+    "type": "object",
+    "description": "A single video game title to evaluate for memorability.",
+    "properties": {
+      "title": {
+        "type": "string",
+        "description": "The video game title to score. This is the full name of the game as it would appear on a storefront page, in conversation, or in a search bar. For example: \"Hollow Knight\", \"Celeste\", \"Slay the Spire\", or \"Tom Clancy's Ghost Recon Advanced Warfighter\"."
+      }
+    },
+    "required": [
+      "title"
+    ]
+  },
+  "tasks": [
+    {
+      "type": "vector.completion",
+      "skip": null,
+      "messages": [
+        {
+          "role": "user",
+          "content": [
+            {
+              "type": "text",
+              "text": {
+                "$starlark": "'A friend tells you about a video game called \"' + input[\"title\"] + '\". Based on the title alone, does this game sound like it has its own unique identity, or could it be confused with dozens of other games on the market?'"
+              }
+            }
+          ]
+        }
+      ],
+      "responses": [
+        [
+          {
+            "type": "text",
+            "text": "That title is unmistakably its own thing. It feels specific and singular — I can't think of another game it would be confused with. It carves out its own space immediately."
+          }
+        ],
+        [
+          {
+            "type": "text",
+            "text": "It has some personality, but parts of it feel familiar — like I've seen similar titles before. It's not completely generic, but it doesn't fully stand apart either."
+          }
+        ],
+        [
+          {
+            "type": "text",
+            "text": "That title is very generic. It sounds interchangeable with countless other games. Nothing about it stands out or makes it feel like it belongs to one specific game."
+          }
+        ]
+      ],
+      "output": {
+        "$starlark": "output[\"scores\"][0] * 1.0 + output[\"scores\"][1] * 0.5 + output[\"scores\"][2] * 0.0"
+      }
+    },
+    {
+      "type": "vector.completion",
+      "skip": null,
+      "messages": [
+        {
+          "role": "user",
+          "content": [
+            {
+              "type": "text",
+              "text": {
+                "$starlark": "'Imagine you played a great video game called \"' + input[\"title\"] + '\" and want to recommend it to a friend tomorrow. How easy would this title be to remember and share?'"
+              }
+            }
+          ]
+        }
+      ],
+      "responses": [
+        [
+          {
+            "type": "text",
+            "text": "Very easy. It's short, punchy, and carries clear identity. I'd remember it effortlessly and could tell a friend without hesitating or fumbling over the words."
+          }
+        ],
+        [
+          {
+            "type": "text",
+            "text": "Manageable, but not effortless. It's a bit wordy or slightly vague — I'd probably remember most of it, but might stumble on the exact phrasing or second-guess a word."
+          }
+        ],
+        [
+          {
+            "type": "text",
+            "text": "Difficult. It's too long, too cumbersome, or too vague to stick. I'd likely forget the exact title or have real trouble searching for it later."
+          }
+        ]
+      ],
+      "output": {
+        "$starlark": "output[\"scores\"][0] * 1.0 + output[\"scores\"][1] * 0.5 + output[\"scores\"][2] * 0.0"
+      }
+    },
+    {
+      "type": "vector.completion",
+      "skip": null,
+      "messages": [
+        {
+          "role": "user",
+          "content": [
+            {
+              "type": "text",
+              "text": {
+                "$starlark": "'Say this video game title out loud: \"' + input[\"title\"] + '\". How does it feel in the mouth? Does it have a satisfying rhythm or phonetic quality?'"
+              }
+            }
+          ]
+        }
+      ],
+      "responses": [
+        [
+          {
+            "type": "text",
+            "text": "It sounds fantastic — there's a natural cadence and musicality to it. The syllables fit together satisfyingly, whether through rhythm, alliteration, or a pleasing phonetic texture. It's the kind of title that lodges in your ear after hearing it just once."
+          }
+        ],
+        [
+          {
+            "type": "text",
+            "text": "It sounds fine — not unpleasant, but not particularly musical or catchy either. It's functional but doesn't have that extra sonic quality that makes a title stick in memory through sound alone."
+          }
+        ],
+        [
+          {
+            "type": "text",
+            "text": "It sounds awkward or flat. The syllables feel clunky together, there's no pleasing rhythm, and it's not the kind of thing you'd enjoy saying aloud. It doesn't benefit from any phonetic appeal."
+          }
+        ]
+      ],
+      "output": {
+        "$starlark": "output[\"scores\"][0] * 1.0 + output[\"scores\"][1] * 0.5 + output[\"scores\"][2] * 0.0"
+      }
+    }
+  ],
+  "description": "Scores how memorable a video game title is by evaluating distinctiveness, compactness, and sonic resonance. Returns a scalar between 0 and 1, where higher values indicate titles that stand out, stick in the mind, and are easy to share and search for."
+}
